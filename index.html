@@ -1,0 +1,182 @@
+<!DOCTYPE html>                                  <!-- บอกบราวเซอร์ว่านี่คือเอกสาร HTML5 (มาตรฐานปัจจุบัน) ต้องอยู่บรรทัดแรกเสมอ -->
+<html lang="th">                                   <!-- เปิดเอกสาร HTML และระบุภาษาหลักเป็นไทย (lang ช่วยเรื่องการอ่านออกเสียง/SEO) -->
+<head>                                           <!-- ส่วนหัว: เก็บข้อมูลของหน้า (ไม่แสดงบนจอ) เช่น ชื่อหน้า, การตั้งค่า, สไตล์ -->
+  <meta charset="UTF-8" />                       <!-- กำหนดชุดอักขระเป็น UTF-8 เพื่อให้ภาษาไทยแสดงผลถูกต้อง ไม่เป็นตัวต่างดาว -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- ทำให้หน้าเว็บ responsive: ปรับขนาดตามหน้าจอมือถือ/คอม -->
+  <title>ธตรฐ ไชยศรี | DevPool 2569</title>      <!-- ชื่อหน้าที่โชว์บนแท็บบราวเซอร์ -->
+
+  <style>                                         <!-- เปิดส่วน CSS: ใช้จัดหน้าตา/สี/ระยะห่างทั้งหมดของหน้านี้ (เขียนรวมในไฟล์เดียวเพื่อความง่าย) -->
+    /* :root คือตัวแปรสีของธีม "สว่าง" (light) เก็บเป็น CSS variables เพื่อให้สลับธีมได้ง่าย */
+    :root {
+      --bg: #f4f6fb;                              /* สีพื้นหลังของทั้งหน้า */
+      --card: #ffffff;                            /* สีพื้นหลังของกล่องการ์ดตรงกลาง */
+      --text: #1c2230;                            /* สีตัวอักษรหลัก */
+      --muted: #6b7280;                           /* สีตัวอักษรรอง (จาง ๆ) ใช้กับคำอธิบายภาษาอังกฤษ */
+      --accent: #2563eb;                          /* สีเน้น (ฟ้า) ใช้กับปุ่มและลิงก์ */
+      --border: #e5e7eb;                          /* สีเส้นขอบบาง ๆ */
+    }
+    /* เมื่อ <body> มี class="dark" ตัวแปรชุดนี้จะทับชุดบน = กลายเป็นธีม "มืด" */
+    body.dark {
+      --bg: #0f1420;                              /* พื้นหลังเข้ม */
+      --card: #1a2233;                            /* การ์ดเข้ม */
+      --text: #e8edf5;                            /* ตัวอักษรสว่างบนพื้นเข้ม */
+      --muted: #9aa6b8;                           /* ตัวอักษรรองในธีมมืด */
+      --accent: #5b9dff;                          /* สีเน้นฟ้าสว่างขึ้นให้อ่านง่ายบนพื้นเข้ม */
+      --border: #2a3550;                          /* เส้นขอบในธีมมืด */
+    }
+
+    /* * = ทุก element : รีเซ็ตค่าเริ่มต้นให้ระยะห่างเป็น 0 และคำนวณขนาดแบบ border-box (กันเลย์เอาต์เพี้ยน) */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* จัดสไตล์พื้นฐานของทั้งหน้า (body) */
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", system-ui, sans-serif; /* ฟอนต์อ่านง่าย ใช้ฟอนต์ระบบ */
+      background: var(--bg);                      /* ดึงสีพื้นหลังจากตัวแปรธีม */
+      color: var(--text);                         /* ดึงสีตัวอักษรจากตัวแปรธีม */
+      min-height: 100vh;                          /* ให้สูงอย่างน้อยเต็มจอ (100% ของความสูงหน้าจอ) */
+      display: flex;                              /* ใช้ flexbox เพื่อจัดกล่องการ์ดให้อยู่กลางจอ */
+      align-items: center;                        /* จัดกึ่งกลางแนวตั้ง */
+      justify-content: center;                    /* จัดกึ่งกลางแนวนอน */
+      padding: 24px;                              /* เว้นขอบรอบ ๆ กันการ์ดชิดขอบจอบนมือถือ */
+      transition: background 0.3s, color 0.3s;    /* ใส่อนิเมชันนุ่ม ๆ ตอนสลับธีม (ไม่กระตุก) */
+    }
+
+    /* กล่องการ์ดหลักที่ใส่เนื้อหาแนะนำตัว */
+    .card {
+      background: var(--card);                    /* สีพื้นการ์ดตามธีม */
+      border: 1px solid var(--border);            /* เส้นขอบบาง ๆ */
+      border-radius: 18px;                        /* มุมโค้งมน ดูนุ่มนวล */
+      max-width: 560px;                           /* กว้างสุด 560px กันยืดเกินไปบนจอใหญ่ */
+      width: 100%;                                /* ใช้พื้นที่เต็มความกว้างที่มี (จนถึง max ด้านบน) */
+      padding: 40px 36px;                         /* ระยะห่างภายในการ์ด (บน-ล่าง 40, ซ้าย-ขวา 36) */
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);   /* เงาตกกระทบ ทำให้การ์ดดูลอยขึ้นมา */
+    }
+
+    /* แถวบนสุด: เก็บ avatar กับปุ่มสลับธีมไว้คนละฝั่ง */
+    .top {
+      display: flex;                              /* เรียงลูกในแนวนอน */
+      justify-content: space-between;             /* ดันสองฝั่งออกสุด (avatar ซ้าย ปุ่มขวา) */
+      align-items: center;                        /* จัดให้อยู่ระดับเดียวกันแนวตั้ง */
+      margin-bottom: 24px;                        /* เว้นช่องว่างใต้แถวนี้ */
+    }
+
+    /* วงกลมตัวย่อชื่อ (แทนรูปโปรไฟล์ จะได้ไม่ต้องใช้ไฟล์รูป) */
+    .avatar {
+      width: 64px; height: 64px;                  /* ขนาดวงกลม */
+      border-radius: 50%;                         /* ทำให้เป็นวงกลม */
+      background: var(--accent);                  /* สีพื้นวงกลม = สีเน้น */
+      color: #fff;                                /* ตัวอักษรในวงกลมสีขาว */
+      display: flex; align-items: center; justify-content: center; /* จัดตัวอักษรให้อยู่กลางวง */
+      font-size: 24px; font-weight: 700;          /* ขนาด/ความหนาตัวอักษร */
+    }
+
+    h1 { font-size: 28px; margin-bottom: 4px; }   /* ชื่อภาษาไทย: ตัวใหญ่สุด */
+    .name-en { color: var(--muted); font-size: 16px; margin-bottom: 14px; } /* ชื่ออังกฤษ: สีจาง ตัวเล็กกว่า */
+    .role { font-size: 15px; line-height: 1.6; margin-bottom: 6px; } /* บรรทัดตำแหน่งงาน (ไทย) */
+    .role-en { font-size: 14px; color: var(--muted); margin-bottom: 22px; } /* ตำแหน่งงาน (อังกฤษ) สีจาง */
+
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; } /* หัวข้อย่อยตัวเล็กแบบ label */
+    p.about { line-height: 1.7; margin-bottom: 8px; } /* ย่อหน้าแนะนำตัว เว้นบรรทัดให้อ่านสบาย */
+    p.about-en { line-height: 1.7; color: var(--muted); font-size: 14px; margin-bottom: 24px; } /* ย่อหน้าอังกฤษ สีจาง */
+
+    /* แถวของปุ่ม (เรียงต่อกัน เว้นช่องว่าง) */
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+
+    /* สไตล์ปุ่มทั่วไป */
+    button {
+      font: inherit;                              /* ใช้ฟอนต์เดียวกับหน้า (ไม่ใช้ฟอนต์ default ของปุ่ม) */
+      cursor: pointer;                            /* เปลี่ยนเมาส์เป็นรูปมือเมื่อชี้ บอกว่าคลิกได้ */
+      border: 1px solid var(--border);            /* เส้นขอบปุ่ม */
+      background: var(--accent);                  /* สีพื้นปุ่ม = สีเน้น */
+      color: #fff;                                /* ตัวอักษรปุ่มสีขาว */
+      padding: 10px 16px;                         /* ระยะห่างภายในปุ่ม */
+      border-radius: 10px;                        /* มุมโค้งของปุ่ม */
+      font-size: 14px;                            /* ขนาดตัวอักษรในปุ่ม */
+      transition: opacity 0.2s, transform 0.1s;   /* อนิเมชันตอน hover/กด */
+    }
+    button:hover { opacity: 0.9; }                /* เอาเมาส์ชี้แล้วจางลงนิด ให้รู้ว่ากำลังชี้อยู่ */
+    button:active { transform: scale(0.97); }     /* ตอนกดปุ่มยุบลงเล็กน้อย ให้ feedback ว่ากดติด */
+    button.ghost { background: transparent; color: var(--text); } /* ปุ่มแบบโปร่ง (ใช้กับปุ่มสลับธีม) */
+
+    /* กล่อง "เหตุผลที่สมัคร" ที่ซ่อนไว้ตอนแรก */
+    .reason {
+      background: var(--bg);                       /* พื้นต่างจากการ์ดนิดให้ดูเป็นกรอบ */
+      border: 1px solid var(--border);            /* เส้นขอบ */
+      border-radius: 12px;                        /* มุมโค้ง */
+      padding: 18px;                              /* ระยะห่างภายใน */
+      line-height: 1.7;                           /* ระยะบรรทัด */
+      margin-bottom: 22px;                        /* เว้นใต้กล่อง */
+    }
+    .reason-en { color: var(--muted); font-size: 14px; margin-top: 8px; } /* ข้อความอังกฤษในกล่องเหตุผล */
+
+    /* class hidden: ใช้สั่งซ่อน element โดยสมบูรณ์ (JavaScript จะเพิ่ม/ลบ class นี้เพื่อโชว์-ซ่อน) */
+    .hidden { display: none; }
+
+    /* ส่วนท้าย: ลิงก์ GitHub */
+    .footer { border-top: 1px solid var(--border); padding-top: 16px; font-size: 14px; } /* เส้นคั่นด้านบนแล้วใส่ลิงก์ */
+    .footer a { color: var(--accent); text-decoration: none; } /* ลิงก์สีเน้น ไม่มีขีดเส้นใต้ */
+    .footer a:hover { text-decoration: underline; } /* ชี้แล้วค่อยขีดเส้นใต้ */
+  </style>
+</head>
+
+<body>                                            <!-- เริ่มส่วนที่แสดงผลจริงบนจอ -->
+  <main class="card">                             <!-- กล่องการ์ดหลัก (ใช้ <main> เพื่อบอกว่าเป็นเนื้อหาสำคัญของหน้า) -->
+
+    <div class="top">                             <!-- แถวบนสุด -->
+      <div class="avatar">ธช</div>                <!-- วงกลมตัวย่อชื่อ "ธ" + "ช" (ธตรฐ ไชยศรี) -->
+      <!-- ปุ่มสลับธีม: onclick="toggleTheme()" สั่งให้เรียกฟังก์ชัน toggleTheme เมื่อคลิก -->
+      <button class="ghost" id="themeBtn" onclick="toggleTheme()">🌙 โหมดมืด</button>
+    </div>
+
+    <h1>ธตรฐ ไชยศรี</h1>                          <!-- ชื่อ-นามสกุล ภาษาไทย -->
+    <div class="name-en">Thatarot Chaisri</div>   <!-- ชื่อ-นามสกุล ภาษาอังกฤษ -->
+
+    <!-- ตำแหน่ง/สังกัด ทั้งไทยและอังกฤษ -->
+    <div class="role">พนักงานการไฟฟ้าส่วนภูมิภาค · สนใจงานพัฒนาระบบดิจิทัล (C#/.NET, SQL Server)</div>
+    <div class="role-en">PEA employee · interested in digital system development (C#/.NET, SQL Server)</div>
+
+    <div class="section-title">เกี่ยวกับผม / About</div> <!-- หัวข้อย่อย -->
+    <!-- ย่อหน้าแนะนำตัว (ไทย) -->
+    <p class="about">สวัสดีครับ ผมธตรฐ สนใจการพัฒนาซอฟต์แวร์และอยากยกระดับทักษะให้เป็นมืออาชีพยิ่งขึ้น จึงสมัครเข้าร่วมโครงการ DevPool 2569 เพื่อเรียนรู้เทคโนโลยีสมัยใหม่และลงมือสร้างของจริง</p>
+    <!-- ย่อหน้าแนะนำตัว (อังกฤษ) -->
+    <p class="about-en">Hi, I'm Thatarot. I enjoy building software and want to level up my skills, so I'm applying to DevPool 2569 to learn modern tools and build real products.</p>
+
+    <div class="actions">                          <!-- แถวปุ่มโต้ตอบ -->
+      <!-- ปุ่มเปิด/ปิดกล่องเหตุผล: เรียกฟังก์ชัน toggleReason เมื่อคลิก -->
+      <button id="reasonBtn" onclick="toggleReason()">ทำไมผมถึงสมัคร? 👀</button>
+    </div>
+
+    <!-- กล่องเหตุผล เริ่มต้นมี class "hidden" = ซ่อนไว้ก่อน จะโผล่เมื่อกดปุ่มด้านบน -->
+    <div class="reason hidden" id="reasonBox">
+      ตรง ๆ เลยครับ — นอกจากความอยากพัฒนาตัวเองแล้ว สิ่งที่จูงใจผมอีกอย่างคือเบี้ยสนับสนุนรายเดือนที่โครงการมอบให้ มันทำให้ผมพร้อมจัดสรรเวลานอกงานมาลงมือกับโครงการนี้อย่างจริงจัง และอยากนำทักษะที่ได้ไปต่อยอดกับงานพัฒนาระบบที่ทำอยู่
+      <div class="reason-en">Honestly — besides wanting to grow, the monthly allowance is a real motivator that makes me ready to commit my off-hours to this program, and I want to apply what I learn to the systems I build at work.</div>
+    </div>
+
+    <div class="footer">                           <!-- ส่วนท้าย -->
+      <!-- ลิงก์ไป GitHub: target="_blank" = เปิดแท็บใหม่, rel="noopener" = ปิดช่องโหว่ความปลอดภัยเวลาเปิดแท็บใหม่ -->
+      🔗 GitHub: <a href="https://github.com/Tahoad" target="_blank" rel="noopener">github.com/Tahoad</a>
+    </div>
+
+  </main>
+
+  <script>                                         // เปิดส่วน JavaScript: โค้ดที่ทำให้หน้าเว็บ "โต้ตอบ" ได้
+    // ---------- ฟังก์ชันที่ 1: สลับธีมสว่าง/มืด ----------
+    function toggleTheme() {                        // ประกาศฟังก์ชัน toggleTheme (ทำงานเมื่อคลิกปุ่มโหมดมืด)
+      const body = document.body;                   // หยิบ element <body> มาเก็บในตัวแปร body เพื่อสั่งงานต่อ
+      body.classList.toggle("dark");                // toggle = ถ้ายังไม่มี class "dark" ให้ใส่, ถ้ามีอยู่แล้วให้เอาออก (สลับไปมา)
+      const btn = document.getElementById("themeBtn"); // หยิบปุ่มธีมมาด้วย id "themeBtn" เพื่อจะเปลี่ยนข้อความบนปุ่ม
+      const isDark = body.classList.contains("dark"); // เช็กว่าตอนนี้อยู่โหมดมืดไหม → ได้ค่า true/false
+      btn.textContent = isDark ? "☀️ โหมดสว่าง" : "🌙 โหมดมืด"; // ถ้ามืดให้ปุ่มเขียน "โหมดสว่าง" ถ้าสว่างให้เขียน "โหมดมืด" (ternary: เงื่อนไข ? ค่าจริง : ค่าเท็จ)
+    }
+
+    // ---------- ฟังก์ชันที่ 2: เปิด/ปิดกล่องเหตุผล ----------
+    function toggleReason() {                       // ประกาศฟังก์ชัน toggleReason (ทำงานเมื่อคลิกปุ่ม "ทำไมผมถึงสมัคร")
+      const box = document.getElementById("reasonBox"); // หยิบกล่องเหตุผลมาด้วย id "reasonBox"
+      const btn = document.getElementById("reasonBtn"); // หยิบปุ่มมาเพื่อเปลี่ยนข้อความบนปุ่ม
+      box.classList.toggle("hidden");               // สลับ class "hidden" → โผล่/ซ่อนกล่องเหตุผล
+      const isHidden = box.classList.contains("hidden"); // เช็กสถานะปัจจุบันว่ากล่องถูกซ่อนอยู่ไหม
+      btn.textContent = isHidden ? "ทำไมผมถึงสมัคร? 👀" : "ซ่อนเหตุผล 🙈"; // เปลี่ยนข้อความปุ่มตามสถานะ
+    }
+  </script>
+</body>
+</html>
