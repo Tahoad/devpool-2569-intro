@@ -60,14 +60,19 @@
       margin-bottom: 24px;                        /* เว้นช่องว่างใต้แถวนี้ */
     }
 
-    /* วงกลมตัวย่อชื่อ (แทนรูปโปรไฟล์ จะได้ไม่ต้องใช้ไฟล์รูป) */
+    /* วงกลมรูปโปรไฟล์ */
     .avatar {
       width: 64px; height: 64px;                  /* ขนาดวงกลม */
       border-radius: 50%;                         /* ทำให้เป็นวงกลม */
-      background: var(--accent);                  /* สีพื้นวงกลม = สีเน้น */
-      color: #fff;                                /* ตัวอักษรในวงกลมสีขาว */
-      display: flex; align-items: center; justify-content: center; /* จัดตัวอักษรให้อยู่กลางวง */
-      font-size: 24px; font-weight: 700;          /* ขนาด/ความหนาตัวอักษร */
+      overflow: hidden;                           /* ตัดรูปที่ล้นออกนอกวงกลมทิ้ง (รูปสี่เหลี่ยมจะถูกครอบเป็นวงกลม) */
+      background: var(--accent);                  /* สีพื้นสำรอง เผื่อรูปโหลดไม่ขึ้น */
+      border: 2px solid var(--border);            /* เส้นขอบบาง ๆ รอบรูป */
+    }
+    /* รูปภายในวงกลม avatar */
+    .avatar img {
+      width: 100%; height: 100%;                  /* ให้รูปเต็มวงกลมพอดี */
+      object-fit: cover;                          /* ครอบรูปไม่ให้บิดเบี้ยว (ตัดส่วนเกินแทนการยืด) */
+      display: block;                             /* เอาช่องว่างใต้รูปออก */
     }
 
     h1 { font-size: 28px; margin-bottom: 4px; }   /* ชื่อภาษาไทย: ตัวใหญ่สุด */
@@ -123,7 +128,7 @@
   <main class="card">                             <!-- กล่องการ์ดหลัก (ใช้ <main> เพื่อบอกว่าเป็นเนื้อหาสำคัญของหน้า) -->
 
     <div class="top">                             <!-- แถวบนสุด -->
-      <div class="avatar">ธช</div>                <!-- วงกลมตัวย่อชื่อ "ธ" + "ช" (ธตรฐ ไชยศรี) -->
+      <div class="avatar"><img src="avatar.jpg" alt="ธตรฐ ไชยศรี" /></div> <!-- รูปโปรไฟล์ในวงกลม (alt = ข้อความสำรองถ้ารูปไม่ขึ้น) -->
       <!-- ปุ่มสลับธีม: onclick="toggleTheme()" สั่งให้เรียกฟังก์ชัน toggleTheme เมื่อคลิก -->
       <button class="ghost" id="themeBtn" onclick="toggleTheme()">🌙 โหมดมืด</button>
     </div>
