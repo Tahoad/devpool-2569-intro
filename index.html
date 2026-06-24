@@ -140,6 +140,8 @@
     .stock-result .price { font-size: 24px; margin: 4px 0; }         /* ราคา ตัวใหญ่ */
     .up { color: #16a34a; }                       /* สีเขียว = ราคาขึ้น */
     .down { color: #dc2626; }                     /* สีแดง = ราคาลง */
+    /* ข้อความหมายเหตุตัวเล็ก ใต้ช่องค้นหาหุ้น */
+    .note { font-size: 12px; color: var(--muted); margin-bottom: 16px; } /* ตัวเล็ก สีจาง */
 
     /* ส่วนท้าย: ลิงก์ GitHub */
     .footer { border-top: 1px solid var(--border); padding-top: 16px; font-size: 14px; } /* เส้นคั่นด้านบนแล้วใส่ลิงก์ */
@@ -181,6 +183,8 @@
       <!-- ปุ่มค้นหา: คลิกแล้วเรียกฟังก์ชัน getStock() ไปดึงราคาหุ้น -->
       <button onclick="getStock()">ค้นหา</button>
     </div>
+    <!-- หมายเหตุตัวเล็กใต้ช่องค้นหา: บอกที่มา API และโควต้าการใช้งานฟรี -->
+    <div class="note">ℹ️ ข้อมูลหุ้นฟรีจาก Alpha Vantage · ดูได้วันละ 25 ครั้ง</div>
     <!-- กล่องผลลัพธ์ เริ่มต้นซ่อน (hidden) จะโผล่เมื่อกดค้นหา -->
     <div class="stock-result hidden" id="stockResult"></div>
 
