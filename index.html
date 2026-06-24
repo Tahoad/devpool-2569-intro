@@ -117,6 +117,30 @@
     /* class hidden: ใช้สั่งซ่อน element โดยสมบูรณ์ (JavaScript จะเพิ่ม/ลบ class นี้เพื่อโชว์-ซ่อน) */
     .hidden { display: none; }
 
+    /* แถวช่องค้นหาหุ้น: ช่องกรอก + ปุ่ม เรียงต่อกัน */
+    .stock-search { display: flex; gap: 8px; margin-bottom: 14px; }
+    /* ช่องกรอก ticker */
+    .stock-search input {
+      flex: 1;                                    /* ให้ช่องกรอกยืดเต็มพื้นที่ที่เหลือ (ปุ่มกินเท่าที่จำเป็น) */
+      padding: 10px 12px;                         /* ระยะห่างภายในช่อง */
+      border: 1px solid var(--border);            /* เส้นขอบ */
+      border-radius: 10px;                        /* มุมโค้ง */
+      background: var(--bg);                      /* พื้นตามธีม */
+      color: var(--text);                         /* สีตัวอักษรตามธีม */
+      font: inherit;                              /* ใช้ฟอนต์เดียวกับหน้า */
+    }
+    /* กล่องแสดงผลราคาหุ้น */
+    .stock-result {
+      padding: 16px;                              /* ระยะห่างภายใน */
+      border: 1px solid var(--border);            /* เส้นขอบ */
+      border-radius: 12px;                        /* มุมโค้ง */
+      margin-bottom: 22px;                        /* เว้นใต้กล่อง */
+    }
+    .stock-result .sym { font-weight: 700; font-size: 18px; }        /* ชื่อย่อหุ้น ตัวหนา */
+    .stock-result .price { font-size: 24px; margin: 4px 0; }         /* ราคา ตัวใหญ่ */
+    .up { color: #16a34a; }                       /* สีเขียว = ราคาขึ้น */
+    .down { color: #dc2626; }                     /* สีแดง = ราคาลง */
+
     /* ส่วนท้าย: ลิงก์ GitHub */
     .footer { border-top: 1px solid var(--border); padding-top: 16px; font-size: 14px; } /* เส้นคั่นด้านบนแล้วใส่ลิงก์ */
     .footer a { color: var(--accent); text-decoration: none; } /* ลิงก์สีเน้น ไม่มีขีดเส้นใต้ */
@@ -150,6 +174,16 @@
       <div class="reason-en">Honestly — I want to join because I want the money.</div>
     </div>
 
+    <div class="section-title">ดูราคาหุ้น / Stock Quote</div> <!-- หัวข้อย่อยของส่วนค้นหาหุ้น -->
+    <div class="stock-search">                     <!-- แถวช่องค้นหา -->
+      <!-- ช่องกรอกชื่อย่อหุ้น: onkeydown ดักปุ่มคีย์บอร์ด ถ้ากด Enter ให้ค้นหาเลย (ไม่ต้องเอาเมาส์ไปกดปุ่ม) -->
+      <input id="tickerInput" type="text" placeholder="เช่น AAPL, TSLA, NVDA" onkeydown="if(event.key==='Enter') getStock()" />
+      <!-- ปุ่มค้นหา: คลิกแล้วเรียกฟังก์ชัน getStock() ไปดึงราคาหุ้น -->
+      <button onclick="getStock()">ค้นหา</button>
+    </div>
+    <!-- กล่องผลลัพธ์ เริ่มต้นซ่อน (hidden) จะโผล่เมื่อกดค้นหา -->
+    <div class="stock-result hidden" id="stockResult"></div>
+
     <div class="footer">                           <!-- ส่วนท้าย -->
       <!-- ลิงก์ไป GitHub: target="_blank" = เปิดแท็บใหม่, rel="noopener" = ปิดช่องโหว่ความปลอดภัยเวลาเปิดแท็บใหม่ -->
       🔗 GitHub: <a href="https://github.com/Tahoad" target="_blank" rel="noopener">github.com/Tahoad</a>
@@ -174,6 +208,53 @@
       box.classList.toggle("hidden");               // สลับ class "hidden" → โผล่/ซ่อนกล่องเหตุผล
       const isHidden = box.classList.contains("hidden"); // เช็กสถานะปัจจุบันว่ากล่องถูกซ่อนอยู่ไหม
       btn.textContent = isHidden ? "ทำไมผมถึงสมัคร? 👀" : "ซ่อนเหตุผล 🙈"; // เปลี่ยนข้อความปุ่มตามสถานะ
+    }
+
+    // ---------- ฟังก์ชันที่ 3: ดึงราคาหุ้นจาก API ภายนอก (Alpha Vantage) ----------
+    // async = ฟังก์ชันที่ทำงานแบบ "รอข้อมูลจากเน็ตได้" โดยไม่ค้างหน้าจอ (ใช้คู่กับ await)
+    async function getStock() {
+      const input = document.getElementById("tickerInput"); // หยิบช่องกรอกมาเก็บไว้
+      const symbol = input.value.trim().toUpperCase();       // เอาค่าที่พิมพ์ ตัดช่องว่างหน้า-หลัง (trim) แล้วทำเป็นตัวพิมพ์ใหญ่ (หุ้นใช้ตัวใหญ่ เช่น AAPL)
+      const box = document.getElementById("stockResult");    // หยิบกล่องแสดงผลมาเก็บไว้
+      box.classList.remove("hidden");                        // เอา class hidden ออก = ทำให้กล่องผลลัพธ์โผล่ขึ้นมา
+
+      if (!symbol) {                                         // ถ้าไม่ได้พิมพ์อะไรมา (ค่าว่าง)
+        box.textContent = "กรุณาพิมพ์ชื่อย่อหุ้นก่อน";        // แจ้งเตือนในกล่อง
+        return;                                              // หยุดฟังก์ชัน ไม่ต้องยิง API
+      }
+
+      box.textContent = "กำลังโหลด...";                       // แสดงสถานะระหว่างรอข้อมูล ให้ผู้ใช้รู้ว่ากำลังทำงาน
+
+      const apiKey = "FMWZSXQ41F7XPKCO";                     // กุญแจ (key) สำหรับเข้าใช้ API ของ Alpha Vantage
+      // ประกอบ URL ที่จะยิงไปขอข้อมูล: function=GLOBAL_QUOTE คือขอราคาล่าสุดของหุ้น 1 ตัว, ${symbol} แทรกชื่อหุ้นที่พิมพ์
+      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+
+      try {                                                  // try = ลองทำ ถ้าพังให้ไปเข้า catch (กันหน้าเว็บ error ค้าง)
+        const res = await fetch(url);                        // fetch = ส่งคำขอไปที่ URL, await = รอจนได้คำตอบกลับมา
+        const data = await res.json();                       // แปลงคำตอบ (รูปแบบ JSON) ให้เป็น object ที่ JS ใช้งานได้
+        const quote = data["Global Quote"];                  // ดึงเฉพาะส่วน "Global Quote" ที่มีข้อมูลราคาหุ้น
+
+        if (!quote || !quote["05. price"]) {                 // ถ้าไม่มีข้อมูล หรือไม่มีราคา (พิมพ์หุ้นผิด หรือใช้เกินโควต้า 25 ครั้ง/วัน)
+          box.textContent = `ไม่พบข้อมูลหุ้น "${symbol}" (อาจพิมพ์ผิด หรือเกินโควต้า 25 ครั้ง/วัน)`;
+          return;                                            // หยุด ไม่ต้องแสดงราคา
+        }
+
+        const price = parseFloat(quote["05. price"]).toFixed(2);   // ดึงราคา แปลงเป็นตัวเลข แล้วตัดให้เหลือทศนิยม 2 ตำแหน่ง
+        const change = parseFloat(quote["09. change"]).toFixed(2); // ดึงค่าที่เปลี่ยนแปลง (บวก/ลบ) ทศนิยม 2 ตำแหน่ง
+        const changePct = quote["10. change percent"];            // ดึงเปอร์เซ็นต์ที่เปลี่ยนแปลง (เป็นข้อความ เช่น "0.55%")
+        const isUp = parseFloat(change) >= 0;                     // เช็กว่าขึ้นหรือลง: ถ้า change >= 0 = ขึ้น (true)
+        const arrow = isUp ? "▲" : "▼";                          // ลูกศรขึ้นถ้าราคาขึ้น, ลูกศรลงถ้าราคาลง
+        const cls = isUp ? "up" : "down";                        // เลือก class สี: เขียว(up) หรือ แดง(down)
+
+        // ใส่ HTML ลงกล่องผลลัพธ์: ชื่อหุ้น + ราคา + ลูกศร/ส่วนเปลี่ยนแปลง (ระบายสีตามขึ้น-ลง)
+        box.innerHTML =
+          `<div class="sym">${quote["01. symbol"]}</div>` +
+          `<div class="price">$${price}</div>` +
+          `<div class="${cls}">${arrow} ${change} (${changePct})</div>`;
+
+      } catch (err) {                                        // ถ้าระหว่างทำเกิดข้อผิดพลาด (เช่น เน็ตหลุด)
+        box.textContent = "เกิดข้อผิดพลาดในการดึงข้อมูล: " + err.message; // แสดงข้อความ error ในกล่อง
+      }
     }
   </script>
 </body>
